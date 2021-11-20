@@ -38,3 +38,16 @@ func (b *Book) Validate() error {
 		return nil
 	}
 }
+
+// Finds book by id
+// Returns book, nil on success
+func GetBook(book_id int32) (*Book, error) {
+	books := database.GetSession().Collection("book")
+	result := &Book{}
+
+	err := books.Find(db.Cond{"id": book_id}).One(result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
