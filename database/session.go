@@ -13,8 +13,8 @@ func init() {
 	db_settings := mysql.ConnectionURL{
 		Database: `book_store`,
 		Host:     `localhost`,
-		User:     `default`,
-		Password: `default`,
+		User:     `test_user`,
+		Password: `test`,
 	}
 
 	// open database session

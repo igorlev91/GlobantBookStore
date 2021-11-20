@@ -15,7 +15,7 @@ services:
     # setting some env vars to create the DB
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: "test"
-      MYSQL_DATABASE: "test"
+      MYSQL_DATABASE: "book_store"
       MYSQL_USER: "test_user"
       MYSQL_PASSWORD: "test"
 

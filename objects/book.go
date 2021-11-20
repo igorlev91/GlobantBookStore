@@ -2,6 +2,7 @@ package objects
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/igorlev91/GlobantBookStore/database"
 	"github.com/upper/db/v4"
@@ -18,6 +19,18 @@ type Book struct {
 type Genre struct {
 	Id   uint   `json,db:"id,omitempty"`
 	Name string `json:"name"`
+}
+
+type Endpoints interface {
+	GetBookByIdMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
+
+	CreateBookMethod() func(w http.ResponseWriter, r *http.Request)
+
+	GetBooksByfiltering() func(w http.ResponseWriter, r *http.Request)
+
+	UpdateBookMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
+
+	DeleteBookMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
 }
 
 func (b *Book) Validate() error {
@@ -39,8 +52,6 @@ func (b *Book) Validate() error {
 	}
 }
 
-// Finds book by id
-// Returns book, nil on success
 func GetBook(book_id int32) (*Book, error) {
 	books := database.GetSession().Collection("book")
 	result := &Book{}

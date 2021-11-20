@@ -9,7 +9,7 @@ import (
 	"github.com/igorlev91/GlobantBookStore/objects"
 )
 
-var GetBookByIdHandler = func(w http.ResponseWriter, r *http.Request) {
+var GetBookByIdMethod = func(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	book_id, _ := strconv.ParseInt(vars["id"], 10, 32)
 	book, _ := objects.GetBook(int32(book_id))
@@ -20,4 +20,18 @@ var GetBookByIdHandler = func(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusFound)
 	json.NewEncoder(w).Encode(book)
+}
+
+var CreateBookMethod = func(w http.ResponseWriter, r *http.Request) {
+	book := &objects.Book{}
+	err := json.NewDecoder(r.Body).Decode(book)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	//todo Insert
+	w.WriteHeader(http.StatusCreated)
+	id := []byte(strconv.FormatInt(int64(book.Id), 10))
+	w.Write([]byte(id))
 }
