@@ -1,4 +1,5 @@
 use book_store;
+
 insert into genre (id, name) values
     (1, 'Adventure'),
     (2, 'Classics'),

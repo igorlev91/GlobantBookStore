@@ -1,30 +1,32 @@
-package session
+package database
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/upper/db/v4"
 	"github.com/upper/db/v4/adapter/mysql"
 )
 
-var db_settings mysql.ConnectionURL
+var session db.Session
 
-func Create() (db.Session, error) {
-	// configure connection
+func init() {
+	db_settings := mysql.ConnectionURL{
+		Database: `book_store`,
+		Host:     `localhost`,
+		User:     `default`,
+		Password: `default`,
+	}
 
-	 db_settings = mysql.ConnectionURL{
-		Database: `book_store`,  // Database name
-		Host:     `localhost,`      // Server IP or name
-		User:     `upperio`,        // Username
-		Password: `upperio`,        // Password
-	  }
-	// open db session
+	// open database session
 	fmt.Println("Try open session: ", db_settings)
-	session, err := mysql.Open(db_settings)
+	var err error
+	session, err = mysql.Open(db_settings)
 	if err != nil {
-		return nil, errors.New("session.Create: " + err.Error())
+		fmt.Print(err)
 	}
 	fmt.Println("Session created")
-	return session, nil
+}
+
+func GetSession() db.Session {
+	return session
 }

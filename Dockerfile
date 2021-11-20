@@ -1,5 +1,5 @@
 # go_server_image
-FROM golang:1.16.4-buster
+FROM golang:1.17-buster
 ENV PATH="${PATH}:$GOPATH"
 WORKDIR /go/src
 COPY . .
