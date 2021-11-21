@@ -24,6 +24,7 @@ func init() {
 	if err != nil {
 		fmt.Print(err)
 	}
+
 	fmt.Println("Session created")
 }
 
