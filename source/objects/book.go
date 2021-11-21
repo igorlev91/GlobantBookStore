@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/igorlev91/GlobantBookStore/database"
+	"github.com/igorlev91/GlobantBookStore/source/database"
 	"github.com/upper/db/v4"
 )
 

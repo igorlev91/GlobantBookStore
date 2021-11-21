@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/igorlev91/GlobantBookStore/objects"
+	"github.com/igorlev91/GlobantBookStore/source/objects"
 )
 
 var GetBookByIdMethod = func(w http.ResponseWriter, r *http.Request) {

@@ -10,6 +10,7 @@ import (
 var session db.Session
 
 func init() {
+
 	db_settings := mysql.ConnectionURL{
 		Database: `book_store`,
 		Host:     `localhost`,

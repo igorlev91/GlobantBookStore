@@ -27,7 +27,7 @@ services:
 
     build:
       context: .
-      dockerfile: api.Dockerfile
+      dockerfile: Dockerfile.server
     ports:
       - "8080:8080"
 
@@ -35,4 +35,4 @@ services:
       - db
 
     volumes:
-      - .:/app/
+      - .:/source/

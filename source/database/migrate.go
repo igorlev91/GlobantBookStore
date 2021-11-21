@@ -7,7 +7,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-func try_migrate(db *sql.DB) error {
+func migrate_data(db *sql.DB) error {
 
 	fmt.Println("Starting migrations")
 
