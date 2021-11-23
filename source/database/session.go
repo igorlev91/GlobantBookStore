@@ -1,34 +1,32 @@
 package database
 
 import (
+	"log"
+
+	"database/sql"
 	"fmt"
 
-	"github.com/upper/db/v4"
-	"github.com/upper/db/v4/adapter/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-var session db.Session
+func Database_Connect(setting *Config) (*sql.DB, error) {
+	dbConfig := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		setting.Database.Sql_username,
+		setting.Database.Sql_password,
+		setting.Database.Sql_host,
+		setting.Database.Port,
+		setting.Database.Sql_name,
+	)
 
-func init() {
+	db, err := sql.Open("mysql", dbConfig)
 
-	db_settings := mysql.ConnectionURL{
-		Database: `book_store`,
-		Host:     `localhost`,
-		User:     `test_user`,
-		Password: `test`,
-	}
-
-	// open database session
-	fmt.Println("Try open session: ", db_settings)
-	var err error
-	session, err = mysql.Open(db_settings)
 	if err != nil {
-		fmt.Print(err)
+		return nil, err
 	}
 
-	fmt.Println("Session created")
+	return db, err
 }
 
-func GetSession() db.Session {
-	return session
+func NewServer(setting *Config) {
+	log.Println("Server listening on port", setting.Database.Port)
 }

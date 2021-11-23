@@ -1,11 +1,7 @@
 package objects
 
 import (
-	"errors"
 	"net/http"
-
-	"github.com/igorlev91/GlobantBookStore/source/database"
-	"github.com/upper/db/v4"
 )
 
 type Book struct {
@@ -31,34 +27,4 @@ type Endpoints interface {
 	UpdateBookMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
 
 	DeleteBookMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
-}
-
-func (b *Book) Validate() error {
-
-	books := database.GetSession().Collection("book")
-
-	name_duplications, _ := books.Find(db.Cond{"name": b.Name}).Count()
-	if name_duplications != 0 {
-		return errors.New("Name is not unique")
-	}
-
-	switch {
-	case b.Price < 0:
-		return errors.New("Bad price")
-	case b.Amount < 0:
-		return errors.New("Bad amount")
-	default:
-		return nil
-	}
-}
-
-func GetBook(book_id int32) (*Book, error) {
-	books := database.GetSession().Collection("book")
-	result := &Book{}
-
-	err := books.Find(db.Cond{"id": book_id}).One(result)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
 }

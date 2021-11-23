@@ -2,7 +2,6 @@ create database if not exists book_store
 
 use book_store;
 
-
 CREATE TABLE IF NOT EXISTS book (
     book_id INT PRIMARY KEY AUTO_INCREMENT,
     `name` varchar(100) unique NOT NULL,
