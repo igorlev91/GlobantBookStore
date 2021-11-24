@@ -11,3 +11,6 @@ CREATE TABLE IF NOT EXISTS book (
     primary key (book_id),
     FOREIGN KEY (genre_id)  REFERENCES genre (genre_id)
 );
+
+INSERT INTO Book
+VALUES (1, 'The Three Musketeers', 1, 10.44, 5);
