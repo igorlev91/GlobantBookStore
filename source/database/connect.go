@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"log"
 
@@ -12,7 +13,9 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var db *gorm.DB
+type ServiceDB struct {
+	DB *gorm.DB
+}
 
 func GetConnectionDatabase() string {
 	config := getConfig()
@@ -21,18 +24,20 @@ func GetConnectionDatabase() string {
 		config.Database_password, config.Database_ServerName, config.Database_Port, config.Database_name)
 }
 
-func Database_Connect() (*gorm.DB, error) {
+func Database_Connect(s *ServiceDB) {
+	fmt.Println("Start Database_Connect")
 	connection := GetConnectionDatabase()
+	fmt.Println(connection)
 
-	sqlDb, err := sql.Open("mysql", connection)
+	var client *sql.DB
+	client, err := sql.Open("mysql", connection)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	//defer db.Close()
 
 	db, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: sqlDb,
+		Conn: client,
 	}), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
@@ -40,9 +45,16 @@ func Database_Connect() (*gorm.DB, error) {
 		panic(err)
 	}
 
-	sqlDB, err := db.DB()
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
+	client.SetConnMaxIdleTime(time.Minute * 3)
+	client.SetMaxIdleConns(10)
+	client.SetMaxIdleConns(10)
+	fmt.Println("Successfully connect to MySql")
 
-	return db, err
+	// try migrate
+	//err = migrate_data(db)
+	//if err != nil {
+	//	fmt.Print(err)
+	//}
+	s.DB = db
+
 }
