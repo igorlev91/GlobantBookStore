@@ -1,21 +1,16 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
-	"time"
-
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	objects "github.com/igorlev91/GlobantBookStore/source/objects"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
-type ServiceDB struct {
-	DB *gorm.DB
-}
+var DB *gorm.DB
 
 func GetConnectionDatabase() string {
 	config := getConfig()
@@ -24,37 +19,22 @@ func GetConnectionDatabase() string {
 		config.Database_password, config.Database_ServerName, config.Database_Port, config.Database_name)
 }
 
-func Database_Connect(s *ServiceDB) {
-	fmt.Println("Start Database_Connect")
+func Database_Connect() {
+
 	connection := GetConnectionDatabase()
 	fmt.Println(connection)
 
-	var client *sql.DB
-	client, err := sql.Open("mysql", connection)
-
+	db, err := gorm.Open(mysql.Open(connection), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		panic("connected db failed")
 	}
 
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: client,
-	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	println("connected on db")
+
+	db.AutoMigrate(&objects.Book{}, &objects.Genre{})
 	if err != nil {
-		panic(err)
+		panic("Failed to migrate tables")
 	}
 
-	client.SetConnMaxIdleTime(time.Minute * 3)
-	client.SetMaxIdleConns(10)
-	client.SetMaxIdleConns(10)
-	fmt.Println("Successfully connect to MySql")
-
-	// try migrate
-	//err = migrate_data(db)
-	//if err != nil {
-	//	fmt.Print(err)
-	//}
-	s.DB = db
-
+	DB = db
 }

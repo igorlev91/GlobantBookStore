@@ -7,7 +7,7 @@ require github.com/go-sql-driver/mysql v1.6.0
 require (
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/gorilla/mux v1.8.0
-	github.com/jinzhu/gorm v1.9.16
+	github.com/upper/db/v4 v4.2.1
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/gorm v1.22.3
 )

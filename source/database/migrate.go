@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -8,14 +9,12 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-
-	"github.com/jinzhu/gorm"
 )
 
-func migrate_data(db *gorm.DB) error {
+func migrate_data(db *sql.DB) error {
 
 	fmt.Println("Start migrations")
-	driver, err := mysql.WithInstance(db.DB(), &mysql.Config{})
+	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
 		return errors.New("mysql.WithInstance: " + err.Error())
 	}

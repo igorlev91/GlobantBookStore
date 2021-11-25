@@ -28,3 +28,4 @@ type Endpoints interface {
 
 	DeleteBookMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
 }
+

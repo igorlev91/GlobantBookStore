@@ -9,25 +9,57 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/igorlev91/GlobantBookStore/source/controllers"
-	"github.com/igorlev91/GlobantBookStore/source/database"
+
+	"github.com/upper/db/v4/adapter/mysql"
+
+	"github.com/upper/db/v4"
+
+	"database/sql"
 )
+
+var session db.Session
+
+func GetSession() db.Session {
+	return session
+}
 
 func main() {
 	fmt.Println("Start session")
 
-	//init database
-	service := &database.ServiceDB{}
-	database.Database_Connect(service)
+	db_settings := mysql.ConnectionURL{
+		Database: `book_store`,
+		Host:     `127.0.0.1`,
+		User:     `root`,
+		Password: `29394959abc`,
+		Options: map[string]string{
+			"multiStatements": "true",
+		},
+	}
 
-	// init router
+	// open db session
+	fmt.Println("Try open session: ", db_settings)
+	var err error
+	session, err = mysql.Open(db_settings)
+	if err != nil {
+		fmt.Print(err)
+	}
+	fmt.Println("Session created")
+
+	// try migrate
+	internalSQLDriver := session.Driver().(*sql.DB)
+	err = database.migrate_data(internalSQLDriver)
+	if err != nil {
+		fmt.Print(err)
+	}
+
 	//TODO Creating router logic
 	log.Println("Creating router")
 	router := mux.NewRouter()
-	router.HandleFunc("/books/{id:[0-9]+}", controllers.GetBookByIdMethod).Methods("GET")
 	router.HandleFunc("/books/new", controllers.CreateBookMethod).Methods("POST")
+	router.HandleFunc("/books/{id:[0-9]+}", controllers.GetBookByIdMethod).Methods("GET")
 
 	//Creating server
-	log.Println("Creating server")
+
 	server := http.Server{
 		Handler:      router,
 		Addr:         "localhost:8000",
