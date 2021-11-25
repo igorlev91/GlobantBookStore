@@ -4,37 +4,54 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
-	objects "github.com/igorlev91/GlobantBookStore/source/objects"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/upper/db/v4"
+	"github.com/upper/db/v4/adapter/mysql"
+
+	"database/sql"
 )
 
-var DB *gorm.DB
+var session db.Session
 
-func GetConnectionDatabase() string {
-	config := getConfig()
-	fmt.Println(config)
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.Database_username,
-		config.Database_password, config.Database_ServerName, config.Database_Port, config.Database_name)
+const (
+	DBHost     = "127.0.0.1"
+	DBPort     = ":3306"
+	DBUser     = "root"
+	DBPassword = ""
+	DBDbase    = "book_store"
+)
+
+// open database session test
+func init() {
+	conn := mysql.ConnectionURL{
+		Database: `book_store`,
+		Host:     "localhost:3306",
+		User:     `root`,
+		Password: `29394959abc`,
+		Options: map[string]string{
+			"multiStatements": "true",
+		},
+	}
+	//var conn = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", DBUser, DBPassword, DBHost, DBDbase)
+
+	// open db session
+	fmt.Println("Start open session: ", conn)
+	var err error
+	session, err = mysql.Open(conn)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	fmt.Println("Session created")
+
+	// migrate tables
+	SQLDriver := session.Driver().(*sql.DB)
+	err = MigrateDatabase(SQLDriver)
+	if err != nil {
+		fmt.Print(err)
+	}
 }
 
-func Database_Connect() {
-
-	connection := GetConnectionDatabase()
-	fmt.Println(connection)
-
-	db, err := gorm.Open(mysql.Open(connection), &gorm.Config{})
-	if err != nil {
-		panic("connected db failed")
-	}
-
-	println("connected on db")
-
-	db.AutoMigrate(&objects.Book{}, &objects.Genre{})
-	if err != nil {
-		panic("Failed to migrate tables")
-	}
-
-	DB = db
+func GetConnection() db.Session {
+	return session
 }

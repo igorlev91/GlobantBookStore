@@ -12,3 +12,4 @@ insert into book_genres (name_genre, genre_id) values
     ('Adventure', 1),
     ('Classics', 2),
     ('Fantasy', 3);
+

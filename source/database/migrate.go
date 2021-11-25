@@ -2,8 +2,8 @@ package database
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
@@ -11,28 +11,31 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-func migrate_data(db *sql.DB) error {
+func MigrateDatabase(db *sql.DB) error {
 
 	fmt.Println("Start migrations")
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
-		return errors.New("mysql.WithInstance: " + err.Error())
+		log.Println("Error mysql.WithInstance")
+		panic(err)
 	}
 
-	m, err := migrate.NewWithDatabaseInstance("file://database/migrations/", "mysql", driver)
+	migration, err := migrate.NewWithDatabaseInstance("file://database/migrations/", "mysql", driver)
 	if err != nil {
-		return errors.New("migrate.NewWithDatabaseInstance: " + err.Error())
+		log.Println("Error migrate.NewWithDatabaseInstance")
+		panic(err)
 	}
 
-	err = m.Up()
-	switch err = m.Up(); err {
-	case nil:
-		fmt.Println("Migrations executed")
-	case migrate.ErrNoChange:
-		fmt.Println("No migrations to execute")
-	default:
-		return errors.New("m.Steps: " + err.Error())
+	err = migration.Up()
+	if migration != nil {
+		err := migration.Steps(1)
+		if err != nil {
+			panic(err)
+		}
 	}
+
+
+	log.Println("Database migrated")
 
 	return nil
 }
