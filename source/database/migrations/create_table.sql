@@ -1,6 +1,6 @@
-create database if not exists book_store
+create database if not exists bookstore
 
-use book_store;
+use bookstore;
 
 CREATE TABLE IF NOT EXISTS book (
     book_id INT PRIMARY KEY AUTO_INCREMENT,

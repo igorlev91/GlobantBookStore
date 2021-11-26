@@ -18,13 +18,13 @@ const (
 	DBPort     = ":3306"
 	DBUser     = "root"
 	DBPassword = ""
-	DBDbase    = "book_store"
+	DBDbase    = "bookstore"
 )
 
 // open database session test
 func init() {
 	conn := mysql.ConnectionURL{
-		Database: `book_store`,
+		Database: `bookstore`,
 		Host:     "localhost:3306",
 		User:     `root`,
 		Password: `29394959abc`,

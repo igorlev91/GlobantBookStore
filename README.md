@@ -14,8 +14,15 @@ Book Store
 
   # Using MySQL
 
-1. Install MySQL
-  - [Download MySQL Community Server](http://dev.mysql.com/downloads/)
+1. Run MySql database by using Docker. Use the next command:
+
+docker run --name mysql-bookstore -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=bookstore -d mysql:latest
+
+If docker error come up: Error response from daemon: Ports are not available: listen tcp 0.0.0.0:3306: bind: address already in use. Use the next command:
+  docker run -e MYSQL_ROOT_PASSWORD=root  --name localMysql -d  -p 3366:3306  mysql:8.0.23
+
+
+// learning
 1. We will need a MySQL driver
   - go get github.com/go-sql-driver/mysql
   - [read the documentation](https://github.com/go-sql-driver/mysql#installation)
@@ -29,5 +36,3 @@ Book Store
   - [Read the documentation](https://github.com/go-sql-driver/mysql#dsn-data-source-name)
 1. Open a connection
   -  "user:password@tcp(localhost:5555)/dbname?charset=utf8")
-
-[package sql](https://godoc.org/database/sql)

@@ -1,8 +1,8 @@
-use book_store;
+use bookstore;
 
 
 CREATE TABLE book_genres (
-    name_genre VARCHAR (30) ,
+    name_genre VARCHAR (100) not null,
     genre_id INTEGER UNSIGNED NOT NULL, 
     primary key (genre_id)
 
