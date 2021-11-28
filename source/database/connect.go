@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -13,26 +14,17 @@ import (
 
 var session db.Session
 
-const (
-	DBHost     = "127.0.0.1"
-	DBPort     = ":3306"
-	DBUser     = "root"
-	DBPassword = ""
-	DBDbase    = "bookstore"
-)
-
 // open database session test
 func init() {
 	conn := mysql.ConnectionURL{
-		Database: `bookstore`,
-		Host:     "localhost:3306",
-		User:     `root`,
-		Password: `29394959abc`,
+		Database: os.Getenv("BOOKSTORE_DBDRIVER"),
+		Host:     os.Getenv("BOOKSTORE_HOST"),
+		User:     os.Getenv("BOOKSTORE_USER"),
+		Password: os.Getenv("BOOKSTORE_PASSWORD"),
 		Options: map[string]string{
 			"multiStatements": "true",
 		},
 	}
-	//var conn = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", DBUser, DBPassword, DBHost, DBDbase)
 
 	// open db session
 	fmt.Println("Start open session: ", conn)

@@ -21,6 +21,8 @@ docker run --name mysql-bookstore -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=tru
 If docker error come up: Error response from daemon: Ports are not available: listen tcp 0.0.0.0:3306: bind: address already in use. Use the next command:
   docker run -e MYSQL_ROOT_PASSWORD=root  --name localMysql -d  -p 3366:3306  mysql:8.0.23
 
+  # Using Docker
+docker-compose build
 
 // learning
 1. We will need a MySQL driver

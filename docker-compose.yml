@@ -6,21 +6,27 @@ services:
     build:
       dockerfile: Dockerfile
     environment:
-      BOOKSTORE_DBDRIVER: mysql
-      BOOKSTORE_DATABASE: root:@tcp(db:3306)/bookstore
+      BOOKSTORE_DATABASE: mysql
+      BOOKSTORE_HOST: root:@tcp(db:3306)/bookstore
+      BOOKSTORE_NAME: bookstore
+      BOOKSTORE_USER: root
+      BOOKSTORE_PASSWORD: pseudo_pass
     ports:
       - "8080:8080"
+    volumes: 
+      - ./source:/go/src/source
+    depends_on: 
+      - db       
 
   db:
     image: mysql:latest
-    container_name: mysql_docker
     volumes:
       - bookstore_data:/var/lib/mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
       MYSQL_DATABASE: bookstore
+
     ports:
       - "3306:3306"
-
 volumes:
     bookstore_data:
