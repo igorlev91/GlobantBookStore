@@ -2,22 +2,44 @@ package database
 
 import (
 	"os"
+
+	"log"
+
+	"github.com/joho/godotenv"
 )
 
-type Setting struct {
-	Database_username string `env:"BOOKSTORE_USER,required"`
-	Database_password string `env:"BOOKSTORE_PASSWORD,required"`
-	Database_Host     string `env:"BOOKSTORE_HOST,default=localhost"`
-	Database_Port     string `env:"BOOKSTORE_PORT,required"`
-	Database_name     string `env:"BOOKSTORE_NAME,required"`
+var Setting struct {
+	Database_username string
+	Database_password string
+	Database_host     string
+	Database_port     string
+	Database_name     string
 }
 
-func getSetting() *Setting {
-	return &Setting{
-		Database_username: os.Getenv("BOOKSTORE_USER"),
-		Database_password: os.Getenv("BOOKSTORE_PASSWORD"),
-		Database_Host:     os.Getenv("BOOKSTORE_HOST"),
-		Database_Port:     os.Getenv("BOOKSTORE_PORT"),
-		Database_name:     os.Getenv("BOOKSTORE_NAME"),
+func SetEnvParams(settingDefault *string, env_variable string, default_value string) {
+	var exists bool
+	*settingDefault, exists = os.LookupEnv(env_variable)
+	if !exists {
+		*settingDefault = default_value
+		log.Println(env_variable)
+		return
 	}
+	log.Println(env_variable, *settingDefault)
+}
+
+func LoadEnv(path string) error {
+	log.Println("Loading ", path)
+	err := godotenv.Load(path)
+	if err != nil {
+		panic(err)
+		//log.Fatal("Error loading .env file")
+	}
+
+	SetEnvParams(&Setting.Database_host, "BOOKSTORE_HOST", "localhost:3306")
+	SetEnvParams(&Setting.Database_name, "BOOKSTORE_DATABASE", "mysql")
+	SetEnvParams(&Setting.Database_username, "BOOKSTORE_USER", "root")
+	SetEnvParams(&Setting.Database_password, "BOOKSTORE_PASSWORD", "")
+	SetEnvParams(&Setting.Database_port, "BOOKSTORE_PORT", "3000")
+
+	return nil
 }

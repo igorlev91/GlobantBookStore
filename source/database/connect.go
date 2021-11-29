@@ -2,48 +2,47 @@ package database
 
 import (
 	"fmt"
-	"os"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/upper/db/v4"
-	"github.com/upper/db/v4/adapter/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"database/sql"
 )
 
-var session db.Session
+var (
+	Db *gorm.DB
+)
 
 // open database session test
-func init() {
-	conn := mysql.ConnectionURL{
-		Database: os.Getenv("BOOKSTORE_DBDRIVER"),
-		Host:     os.Getenv("BOOKSTORE_HOST"),
-		User:     os.Getenv("BOOKSTORE_USER"),
-		Password: os.Getenv("BOOKSTORE_PASSWORD"),
-		Options: map[string]string{
-			"multiStatements": "true",
-		},
-	}
+func InitializeDatabase() {
 
-	// open db session
-	fmt.Println("Start open session: ", conn)
 	var err error
-	session, err = mysql.Open(conn)
+	err = LoadEnv("setting.env")
 	if err != nil {
-		fmt.Print(err)
+		log.Fatal("cannot load config: ", err)
 	}
 
-	fmt.Println("Session created")
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", Setting.Database_username,
+		Setting.Database_password, Setting.Database_host, Setting.Database_port, Setting.Database_name)
 
-	// migrate tables
-	SQLDriver := session.Driver().(*sql.DB)
-	err = MigrateDatabase(SQLDriver)
+	fmt.Println(connectionString)
+	sqlDb, err := sql.Open("mysql", connectionString)
 	if err != nil {
-		fmt.Print(err)
+		panic(err)
 	}
-}
 
-func GetConnection() db.Session {
-	return session
+	db, err := gorm.Open(mysql.New(mysql.Config{
+		Conn: sqlDb,
+	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+	if err != nil {
+		panic(err)
+	}
+	Db = db
+	//db.AutoMigrate(&objects.Book{}, &objects.Genre{})
 }

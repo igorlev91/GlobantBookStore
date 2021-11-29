@@ -1,13 +1,11 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
-
 	"strconv"
 
 	"github.com/igorlev91/GlobantBookStore/source/objects"
-
-	"encoding/json"
 )
 
 var GetBookByIdMethod = func(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +20,7 @@ var CreateBookMethod = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//books := database.GetSession().Collection("book")
+	//TODO
 
 	w.WriteHeader(http.StatusCreated)
 	id := []byte(strconv.FormatInt(int64(book.Id), 10))

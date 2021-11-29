@@ -15,19 +15,15 @@ import (
 func main() {
 	fmt.Println("Start session")
 	// create database session
-	if database.GetConnection() == nil {
-		log.Fatal("Database session not created")
-	}
-	defer database.GetConnection().Close()
+	database.InitializeDatabase()
 
-	//TODO Creating router logic
+	// Creating router logic
 	log.Println("Creating router")
 	router := mux.NewRouter()
 	router.HandleFunc("/books/new", controllers.CreateBookMethod).Methods("POST")
 	router.HandleFunc("/books/{id:[0-9]+}", controllers.GetBookByIdMethod).Methods("GET")
 
 	//Creating server
-
 	server := http.Server{
 		Handler:      router,
 		Addr:         "localhost:3306",
