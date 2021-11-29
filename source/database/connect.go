@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -23,7 +22,8 @@ func InitializeDatabase() {
 	var err error
 	err = LoadEnv("setting.env")
 	if err != nil {
-		log.Fatal("cannot load config: ", err)
+		panic(err.Error())
+		//log.Fatal("cannot load config: ", err)
 	}
 
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", Setting.Database_username,
@@ -32,7 +32,7 @@ func InitializeDatabase() {
 	fmt.Println(connectionString)
 	sqlDb, err := sql.Open("mysql", connectionString)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	db, err := gorm.Open(mysql.New(mysql.Config{
@@ -41,7 +41,7 @@ func InitializeDatabase() {
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 	Db = db
 	//db.AutoMigrate(&objects.Book{}, &objects.Genre{})

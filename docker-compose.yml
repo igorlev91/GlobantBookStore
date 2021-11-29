@@ -11,7 +11,7 @@ services:
     volumes: 
       - ./source:/go/src/source
     env_file: 
-      - ./configs.env  
+      - ./setting.env  
     depends_on: 
       - db
          
@@ -24,7 +24,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
       MYSQL_DATABASE: bookstore
     env_file: 
-       - ./configs.env  
+       - ./setting.env  
 
     ports:
       - "3306:3306"

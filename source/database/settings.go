@@ -31,7 +31,7 @@ func LoadEnv(path string) error {
 	log.Println("Loading ", path)
 	err := godotenv.Load(path)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 		//log.Fatal("Error loading .env file")
 	}
 
