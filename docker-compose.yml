@@ -5,29 +5,33 @@ services:
   bookstore:
     build:
       dockerfile: Dockerfile
-
+    container_name: bookstore_server  
     ports:
-      - "8080:8080"
+      - 3000:3000
     volumes: 
       - ./source:/go/src/source
     env_file: 
       - ./setting.env  
     depends_on: 
       - db
-         
+    networks: 
+      - inner_host  
 
   db:
     image: mysql:latest
     volumes:
       - bookstore_data:/var/lib/mysql
+    container_name: bookstore
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
-      MYSQL_DATABASE: bookstore
+    
     env_file: 
        - ./setting.env  
-
-    ports:
-      - "3306:3306"
+    networks: 
+            - inner_host
+networks:
+    inner_host:
+        driver: "bridge"  
   
 volumes:
     bookstore_data:
