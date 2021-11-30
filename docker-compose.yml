@@ -21,7 +21,7 @@ services:
     image: mysql:latest
     volumes:
       - bookstore_data:/var/lib/mysql
-    container_name: bookstore
+    container_name: bookstore_database
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
     

@@ -20,8 +20,12 @@ func main() {
 	// Creating router logic
 	log.Println("Creating router")
 	router := mux.NewRouter()
-	router.HandleFunc("/books/new", controllers.CreateBookMethod).Methods("POST")
-	router.HandleFunc("/books/{id:[0-9]+}", controllers.GetBookByIdMethod).Methods("GET")
+	api := &controllers.BookORM{
+		DB: database.GetSession(),
+	}
+	router.HandleFunc("/books/new", api.CreateBookMethod).Methods("POST")
+	router.HandleFunc("/books/{id:[0-9]+}", api.GetBookByIdMethod).Methods("GET")
+	router.HandleFunc("/books/{id:[0-9]+}", api.GetBooksByFilterMethod).Methods("GET")
 
 	//Creating server
 	server := http.Server{

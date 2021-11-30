@@ -1,11 +1,13 @@
 package objects
 
 import (
-	"net/http"
+	"errors"
+
+	"gorm.io/gorm"
 )
 
 type Book struct {
-	Id     int32   `json,db:"id,omitempty"`
+	Id     uint    `json,db:"id,omitempty"`
 	Name   string  `json:"name"`
 	Price  float32 `json:"price"`
 	Genre  uint    `json:"genre"`
@@ -17,15 +19,20 @@ type Genre struct {
 	Name string `json:"name"`
 }
 
-type Endpoints interface {
-	GetBookByIdMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
+func GetBookByID(id uint, db *gorm.DB) (Book, bool, error) {
+	book := Book{}
 
-	CreateBookMethod() func(w http.ResponseWriter, r *http.Request)
+	err := db.First(&book, Book{Id: id}).Error
 
-	GetBooksByfiltering() func(w http.ResponseWriter, r *http.Request)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return book, false, err
+	}
 
-	UpdateBookMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
-
-	DeleteBookMethod(idParam string) func(w http.ResponseWriter, r *http.Request)
+	return book, true, nil
 }
 
+func GetAllBooks(db *gorm.DB) ([]Book, error) {
+	books := []Book{}
+
+	return books, nil
+}

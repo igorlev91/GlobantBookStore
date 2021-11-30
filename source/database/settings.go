@@ -31,15 +31,14 @@ func LoadEnv(path string) error {
 	log.Println("Loading ", path)
 	err := godotenv.Load(path)
 	if err != nil {
-		//panic(err.Error())
-		log.Fatal("Error loading .env file")
+		panic(err.Error())
 	}
 
 	SetEnvParams(&Setting.Database_host, "BOOKSTORE_HOST", "127.0.0.1")
 	SetEnvParams(&Setting.Database_name, "BOOKSTORE_NAME", "bookstore")
 	SetEnvParams(&Setting.Database_username, "BOOKSTORE_USER", "root")
 	SetEnvParams(&Setting.Database_password, "BOOKSTORE_PASSWORD", "")
-	SetEnvParams(&Setting.Database_port, "BOOKSTORE_PORT", "3306")
+	SetEnvParams(&Setting.Database_port, "BOOKSTORE_PORT", "3000")
 
 	return nil
 }

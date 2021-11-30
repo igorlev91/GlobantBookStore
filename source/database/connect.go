@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/igorlev91/GlobantBookStore/source/objects"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 
 	"database/sql"
 )
@@ -16,14 +16,13 @@ var (
 	Db *gorm.DB
 )
 
-// open database session test
 func InitializeDatabase() {
 
 	var err error
 	err = LoadEnv("setting.env")
 	if err != nil {
-		panic(err.Error())
-		//log.Fatal("cannot load config: ", err)
+		panic("cannot load config: ")
+
 	}
 
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", Setting.Database_username,
@@ -36,13 +35,26 @@ func InitializeDatabase() {
 	}
 
 	db, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: sqlDb,
+		DriverName:                "mysql",
+		Conn:                      sqlDb,
+		SkipInitializeWithVersion: true,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		SkipDefaultTransaction: true,
+		PrepareStmt:            true,
 	})
 	if err != nil {
 		panic(err.Error())
 	}
 	Db = db
-	//db.AutoMigrate(&objects.Book{}, &objects.Genre{})
+	//Db, err = Migrate(db)
+
+}
+
+func Migrate(db *gorm.DB) (*gorm.DB, error) {
+	db.AutoMigrate(&objects.Book{}, &objects.Genre{})
+	return db, db.Error
+}
+
+func GetSession() *gorm.DB {
+	return Db
 }
