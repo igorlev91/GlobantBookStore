@@ -20,22 +20,22 @@ func main() {
 	// Creating router logic
 	log.Println("Creating router")
 	router := mux.NewRouter()
-	api := &controllers.BookORM{
+	session := &controllers.BookORM{
 		DB: database.GetSession(),
 	}
-	router.HandleFunc("/books/new", api.CreateBookMethod).Methods("POST")
-	router.HandleFunc("/books/{id:[0-9]+}", api.GetBookByIdMethod).Methods("GET")
-	router.HandleFunc("/books/{id:[0-9]+}", api.GetBooksByFilterMethod).Methods("GET")
+	router.HandleFunc("/books/new", session.CreateBookMethod).Methods("POST")
+	router.HandleFunc("/books/{id:[0-9]+}", session.GetBookByIdMethod).Methods("GET")
+	router.HandleFunc("/books/{id:[0-9]+}", session.GetBooksByFilterMethod).Methods("GET")
 
 	//Creating server
 	server := http.Server{
 		Handler:      router,
-		Addr:         "localhost:3306",
+		Addr:         database.Setting.ServerAddress,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 	log.Println("Server created.")
-	log.Println("Listening started on: ", "localhost:3306")
+	log.Println("Listening started on: ", server.Addr)
 	log.Fatal(server.ListenAndServe())
 
 }
