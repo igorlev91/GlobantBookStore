@@ -15,6 +15,9 @@ var Setting struct {
 	Database_port     string
 	Database_name     string
 	ServerAddress     string
+
+	Database_max_connection string
+	Database_timeout        string
 }
 
 func SetEnvParams(settingDefault *string, env_variable string, default_value string) {
@@ -39,7 +42,11 @@ func LoadEnv(path string) error {
 	SetEnvParams(&Setting.Database_name, "BOOKSTORE_NAME", "bookstore")
 	SetEnvParams(&Setting.Database_username, "BOOKSTORE_USER", "root")
 	SetEnvParams(&Setting.Database_password, "BOOKSTORE_PASSWORD", "")
-	SetEnvParams(&Setting.ServerAddress, "SERVER_ADDRESS", "localhost:8000")
+	SetEnvParams(&Setting.Database_port, "BOOKSTORE_PORT", "3306")
+	SetEnvParams(&Setting.ServerAddress, "SERVER_ADDRESS", "8000")
+
+	SetEnvParams(&Setting.Database_max_connection, "DATABASE_MAX_CONN_COUNT", "3")
+	SetEnvParams(&Setting.Database_timeout, "DATABASE_TIMEOUT", "50")
 
 	return nil
 }

@@ -1,8 +1,9 @@
-
 FROM golang
-ENV PATH="${PATH}:$GOPATH"
-WORKDIR /go/src/source
+COPY go.mod go.sum /go/src/github.com/igorlev91/GlobantBookStore/
+WORKDIR /go/src/github.com/igorlev91/GlobantBookStore/
+
+
 RUN go get github.com/githubnemo/CompileDaemon
-CMD go mod download
+RUN go mod download
 ENTRYPOINT CompileDaemon --build="go build main.go" --command=./main
 

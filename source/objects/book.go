@@ -7,16 +7,16 @@ import (
 )
 
 type Book struct {
-	Id     uint    `json,db:"id,omitempty"`
-	Name   string  `json:"name"`
-	Price  float32 `json:"price"`
-	Genre  uint    `json:"genre"`
-	Amount uint    `json:"amount"`
+	Id     uint    `json:"id" gorm:"primaryKey"`
+	Name   string  `json:"name" gorm:"unique;size:100;not null;"`
+	Price  float32 `json:"price" gorm:"not null"`
+	Genre  uint    `json:"genre" gorm:"not null"`
+	Amount uint    `json:"amount" gorm:"not null"`
 }
 
 type Genre struct {
-	Id   uint   `json,db:"id,omitempty"`
-	Name string `json:"name"`
+	Id   uint   `json:"id" gorm:"gorm:primaryKey"`
+	Name string `json:"name" gorm:"unique;type:varchar(100);not null"`
 }
 
 func GetBookByID(id uint, db *gorm.DB) (Book, bool, error) {

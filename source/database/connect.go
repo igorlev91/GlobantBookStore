@@ -4,12 +4,15 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/igorlev91/GlobantBookStore/source/handers"
 	"github.com/igorlev91/GlobantBookStore/source/objects"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	"database/sql"
+	"log"
+	"time"
 )
 
 var (
@@ -29,12 +32,33 @@ func InitializeDatabase() {
 		Setting.Database_password, Setting.Database_host, Setting.Database_port, Setting.Database_name)
 
 	fmt.Println(connectionString)
-	sqlDb, err := sql.Open("mysql", connectionString)
-	if err != nil {
-		panic(err.Error())
-	}
+	// open db session
+	log.Println("Connection: ", connectionString)
+	var sqlDb *sql.DB
 
-	db, err := gorm.Open(mysql.New(mysql.Config{
+	db_count := handers.StringToInt(Setting.Database_max_connection)
+	db_timeout := handers.StringToInt(Setting.Database_timeout)
+
+	for i := 0; i <= db_count; i++ {
+		sqlDb, err = sql.Open("mysql", connectionString)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if i == 2 {
+			fmt.Println("Waiting opening database")
+			break
+		}
+		if err := sqlDb.Ping(); err != nil {
+			fmt.Printf("Try open session %d\n", i)
+			time.Sleep(time.Duration(db_timeout) * time.Second)
+		} else {
+			fmt.Println("Success")
+			break
+		}
+	}
+	fmt.Println("Successfully connection to database")
+
+	driver_connection, err := gorm.Open(mysql.New(mysql.Config{
 		DriverName:                "mysql",
 		Conn:                      sqlDb,
 		SkipInitializeWithVersion: true,
@@ -45,8 +69,8 @@ func InitializeDatabase() {
 	if err != nil {
 		panic(err.Error())
 	}
-	Db = db
-	//Db, err = Migrate(db)
+
+	Db, err = Migrate(driver_connection)
 
 }
 
