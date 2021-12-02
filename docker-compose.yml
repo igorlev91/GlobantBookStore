@@ -7,13 +7,14 @@ services:
       dockerfile: Dockerfile
     container_name: bookstore_server  
     ports:
-      - 3000:3000
+      - "8082:8082"
     volumes: 
       - ./source:/go/src/source
     env_file: 
       - ./setting.env  
     depends_on: 
       - db
+    command:  ["db:3000", "--", "go", "run", "main.go"]
     networks: 
       - inner_host  
 
@@ -24,11 +25,13 @@ services:
     container_name: bookstore_database
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
-    
+    ports:
+      - '3000:3000'
     env_file: 
        - ./setting.env  
     networks: 
             - inner_host
+    restart: always      
 networks:
     inner_host:
         driver: "bridge"  

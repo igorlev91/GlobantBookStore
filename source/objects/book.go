@@ -7,11 +7,12 @@ import (
 )
 
 type Book struct {
-	Id     uint    `json:"id" gorm:"primaryKey"`
-	Name   string  `json:"name" gorm:"unique;size:100;not null;"`
-	Price  float32 `json:"price" gorm:"not null"`
-	Genre  uint    `json:"genre" gorm:"not null"`
-	Amount uint    `json:"amount" gorm:"not null"`
+	Id      uint    `json:"id" gorm:"primaryKey"`
+	Name    string  `json:"name" gorm:"unique;size:100;not null;"`
+	Price   float32 `json:"price" gorm:"not null"`
+	GenreID uint    `json:"genre_id" gorm:"not null"`
+	Amount  uint    `json:"amount" gorm:"not null"`
+	Genre   Genre   `gorm:"foreignKey:GenreID"`
 }
 
 type Genre struct {

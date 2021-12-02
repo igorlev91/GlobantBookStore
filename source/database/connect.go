@@ -13,13 +13,20 @@ import (
 	"database/sql"
 	"log"
 	"time"
+
+	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
+	"gorm.io/gorm/logger"
 )
 
-var (
-	Db *gorm.DB
-)
+type Database struct {
+	Connetion *gorm.DB
+	Router    *mux.Router
+}
 
-func InitializeDatabase() {
+func (server Database) InitializeDatabase() (*gorm.DB, error) {
 
 	var err error
 	err = LoadEnv("setting.env")
@@ -27,6 +34,7 @@ func InitializeDatabase() {
 		panic("cannot load config: ")
 
 	}
+	db := Database{}
 
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", Setting.Database_username,
 		Setting.Database_password, Setting.Database_host, Setting.Database_port, Setting.Database_name)
@@ -44,6 +52,7 @@ func InitializeDatabase() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer sqlDb.Close()
 		if i == 2 {
 			fmt.Println("Waiting opening database")
 			break
@@ -59,26 +68,64 @@ func InitializeDatabase() {
 	fmt.Println("Successfully connection to database")
 
 	driver_connection, err := gorm.Open(mysql.New(mysql.Config{
-		DriverName:                "mysql",
-		Conn:                      sqlDb,
-		SkipInitializeWithVersion: true,
+		DriverName: "mysql",
+		Conn:       sqlDb,
 	}), &gorm.Config{
-		SkipDefaultTransaction: true,
-		PrepareStmt:            true,
+		Logger: logger.Default.LogMode(logger.Info),
 	})
+	if err != nil {
+		fmt.Printf("Cannot connect to %s database", err)
+	} else {
+		fmt.Printf("We are connected to the %s database", err)
+	}
+	db.Connetion = driver_connection
+
+	db.Connetion, err = Migrate(driver_connection)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	Db, err = Migrate(driver_connection)
+	log.Println("Creating router")
+	db.Router = mux.NewRouter()
 
+	db.initializeRoutes()
+
+	return db.Connetion, nil
 }
 
 func Migrate(db *gorm.DB) (*gorm.DB, error) {
-	db.AutoMigrate(&objects.Book{}, &objects.Genre{})
+	db.Debug().AutoMigrate(&objects.Book{}, &objects.Genre{})
+
 	return db, db.Error
 }
 
-func GetSession() *gorm.DB {
-	return Db
+func (d *Database) CloseDatabase() error {
+	sqlDB, err := d.Connetion.DB()
+	if err != nil {
+		return err
+	}
+	err = sqlDB.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d Database) GetSession(db *gorm.DB) *gorm.DB {
+
+	return d.Connetion
+}
+
+func (server *Database) RunServer(addr string) {
+
+	fmt.Println("Listening to port 8080")
+	log.Fatal(http.ListenAndServe(addr, server.Router))
+
+}
+
+func (db *Database) initializeRoutes() {
+
+	db.Router.HandleFunc("/", db.CreateBookMethod).Methods("GET")
+	db.Router.HandleFunc("/books/{id:[0-9]+}", db.GetBookByIdMethod).Methods("GET")
+	db.Router.HandleFunc("/books", db.GetBooksByFilterMethod).Methods("GET")
 }
