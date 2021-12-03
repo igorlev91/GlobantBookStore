@@ -23,19 +23,23 @@ func (db_book *Database) CreateBookMethod(w http.ResponseWriter, r *http.Request
 		handers.RespondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	handers.RespondJSON(true, w, http.StatusOK, book.Id)
+	handers.RespondJSON(true, w, http.StatusOK, book.BookID)
 }
 
 func (db_book *Database) GetBookByIdMethod(w http.ResponseWriter, r *http.Request) {
-	id := getId(r)
-	book, exists, err := objects.GetBookByID(id, db_book.Connetion)
+
+	vars := mux.Vars(r)
+	sId := vars["id"]
+	id := handers.StringToUint(sId)
+
+	book, ok, err := objects.GetBookByID(id, db_book.Connetion)
 	if err != nil {
 		fmt.Println(err)
 		handers.RespondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if !exists {
+	if !ok {
 		handers.RespondError(w, http.StatusNotFound, err.Error())
 		return
 	}
@@ -52,10 +56,4 @@ func (db_book *Database) GetBooksByFilterMethod(w http.ResponseWriter, r *http.R
 	}
 
 	handers.RespondJSON(true, w, http.StatusOK, books)
-}
-
-func getId(r *http.Request) uint {
-	vars := mux.Vars(r)
-	sId := vars["id"]
-	return handers.StringToUint(sId)
 }
