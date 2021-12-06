@@ -37,10 +37,10 @@ func LoadEnv(path string) error {
 		panic(err.Error())
 	}
 
-	SetEnvParams(&Setting.Database_host, "BOOKSTORE_HOST", "127.0.0.1")
-	SetEnvParams(&Setting.Database_name, "BOOKSTORE_NAME", "bookstore")
-	SetEnvParams(&Setting.Database_username, "BOOKSTORE_USER", "root")
-	SetEnvParams(&Setting.Database_password, "BOOKSTORE_PASSWORD", "")
+	SetEnvParams(&Setting.Database_host, "MYSQL_HOST", "127.0.0.1")
+	SetEnvParams(&Setting.Database_name, "MYSQL_DATABASE", "bookstore")
+	SetEnvParams(&Setting.Database_username, "MYSQL_USER", "root")
+	SetEnvParams(&Setting.Database_password, "MYSQL_PASSWORD", "")
 	SetEnvParams(&Setting.Database_port, "BOOKSTORE_PORT", "3336")
 
 	SetEnvParams(&Setting.Database_max_connection, "DATABASE_MAX_CONN_COUNT", "3")
