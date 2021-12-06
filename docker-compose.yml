@@ -10,7 +10,7 @@ services:
     ports:
       - "8082:8082"
     volumes: 
-      - ./bin:/go"
+      - ./source:/go/src/github.com/igorlev91/GlobantBookStore/source
     env_file: 
       - ./setting.env  
     depends_on: 
@@ -28,8 +28,7 @@ services:
     environment:
       
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    ports:
-      - '3406:3306'
+    
     env_file: 
        - ./setting.env  
     networks: 
