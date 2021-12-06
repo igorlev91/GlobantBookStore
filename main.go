@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	ServerAddress string = "8080"
+	ServerAddress string = "8000"
 )
 
 var server = database.Database{}

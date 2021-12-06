@@ -65,11 +65,9 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 			break
 		}
 	}
-	fmt.Println("Successfully connection to database")
 
 	driver_connection, err := gorm.Open(mysql.New(mysql.Config{
-		DriverName: "mysql",
-		Conn:       sqlDb,
+		Conn: sqlDb,
 	}), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
@@ -78,17 +76,22 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 	} else {
 		fmt.Printf("We are connected to the %s database", err)
 	}
-	db.Connetion = driver_connection
 
 	db.Connetion, err = Migrate(driver_connection)
 	if err != nil {
 		panic(err.Error())
 	}
 
+	fmt.Println("Successfully connection to database")
+
 	log.Println("Creating router")
 	db.Router = mux.NewRouter()
 
 	db.initializeRoutes()
+
+	if server.Connetion == nil {
+		return nil, err
+	}
 
 	return db.Connetion, nil
 }
@@ -118,7 +121,7 @@ func (d Database) GetSession(db *gorm.DB) *gorm.DB {
 
 func (server *Database) RunServer(addr string) {
 
-	fmt.Println("Listening to port 8080")
+	fmt.Println("Listening to port 8000")
 	log.Fatal(http.ListenAndServe(addr, server.Router))
 
 }
