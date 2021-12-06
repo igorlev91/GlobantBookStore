@@ -7,14 +7,6 @@ import (
 	"strconv"
 )
 
-func StringToUint(val string) uint {
-	resUint32, err := strconv.ParseUint(val, 10, 32)
-	if err != nil {
-		panic(err)
-	}
-	return uint(resUint32)
-}
-
 func StringToInt(val string) int {
 	res, err := strconv.Atoi(val)
 	if err != nil {
@@ -23,10 +15,10 @@ func StringToInt(val string) int {
 	return res
 }
 
-func RespondJSON(shouldBeEmpty bool, w http.ResponseWriter, status int, book interface{}) {
+func RespondJSON(empty bool, w http.ResponseWriter, status int, book interface{}) {
 	var response []byte
 	var err error
-	if shouldBeEmpty {
+	if empty {
 		response, _ = json.Marshal(book)
 	} else {
 		response, err = json.Marshal(book)
@@ -37,10 +29,14 @@ func RespondJSON(shouldBeEmpty bool, w http.ResponseWriter, status int, book int
 		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	log.Println(string(response))
-	w.Write([]byte(response))
+	TextResponse(w, status, response)
+}
+
+func TextResponse(w http.ResponseWriter, httpStatus int, body []byte) {
+	w.WriteHeader(httpStatus)
+	w.Header().Add("Content-Type", "application/json")
+	log.Println(string(body))
+	w.Write(body)
 }
 
 func RespondError(w http.ResponseWriter, code int, message string) {

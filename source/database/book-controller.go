@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	//	"gorm.io/gorm"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/igorlev91/GlobantBookStore/source/handers"
@@ -30,9 +29,13 @@ func (db_book *Database) GetBookByIdMethod(w http.ResponseWriter, r *http.Reques
 
 	vars := mux.Vars(r)
 	sId := vars["id"]
-	id := handers.StringToUint(sId)
 
-	book, ok, err := objects.GetBookByID(id, db_book.Connetion)
+	book_id, err := strconv.ParseUint(sId, 10, 32)
+	if err != nil {
+		panic(err)
+	}
+
+	book, ok, err := objects.GetBookByID(uint(book_id), db_book.Connetion)
 	if err != nil {
 		fmt.Println(err)
 		handers.RespondError(w, http.StatusInternalServerError, err.Error())

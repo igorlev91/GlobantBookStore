@@ -4,12 +4,13 @@ services:
 
   bookstore:
     build:
+      context: .
       dockerfile: Dockerfile
     container_name: bookstore_server  
     ports:
       - "8082:8082"
     volumes: 
-      - ./source:/go/src/source
+      - ./bin:/go"
     env_file: 
       - ./setting.env  
     depends_on: 
@@ -20,21 +21,22 @@ services:
 
   db:
     image: mysql:latest
-    volumes:
-      - bookstore_data:/var/lib/mysql
+    volumes:  
+      - "./source/database/migrations/bookstore_database.sql:/docker-entrypoint-initdb.d/bookstore_database.sql"
+      
     container_name: bookstore_database
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - '3000:3000'
+      - '3406:3306'
     env_file: 
        - ./setting.env  
     networks: 
-            - inner_host
-    restart: always      
+       - inner_host
+    restart: on-failure      
 networks:
     inner_host:
         driver: "bridge"  
   
 volumes:
-    bookstore_data:
+    bookstore:

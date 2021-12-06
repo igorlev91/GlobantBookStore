@@ -41,7 +41,7 @@ func LoadEnv(path string) error {
 	SetEnvParams(&Setting.Database_name, "BOOKSTORE_NAME", "bookstore")
 	SetEnvParams(&Setting.Database_username, "BOOKSTORE_USER", "root")
 	SetEnvParams(&Setting.Database_password, "BOOKSTORE_PASSWORD", "")
-	SetEnvParams(&Setting.Database_port, "BOOKSTORE_PORT", "3000")
+	SetEnvParams(&Setting.Database_port, "BOOKSTORE_PORT", "3336")
 
 	SetEnvParams(&Setting.Database_max_connection, "DATABASE_MAX_CONN_COUNT", "3")
 	SetEnvParams(&Setting.Database_timeout, "DATABASE_TIMEOUT", "50")
