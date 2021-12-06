@@ -8,9 +8,9 @@ services:
       dockerfile: Dockerfile
     container_name: bookstore_server  
     ports:
-      - "3306:3306"
+      - "8082:8082"
     volumes:
-      - source:/usr/src/app/ 
+       - ./source:/go/src/github.com/igorlev91/GlobantBookStore/source
     env_file: 
       - ./setting.env  
     depends_on: 
@@ -25,6 +25,8 @@ services:
       - book_store_mysql_data:/var/lib/mysql
       
     container_name: bookstore_database
+    ports:
+      - '3406:3306'
     environment:
       
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
