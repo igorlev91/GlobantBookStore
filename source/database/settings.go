@@ -39,9 +39,9 @@ func LoadEnv(path string) error {
 
 	SetEnvParams(&Setting.Database_host, "MYSQL_HOST", "bookstore_database")
 	SetEnvParams(&Setting.Database_name, "MYSQL_DATABASE", "bookstore")
-	SetEnvParams(&Setting.Database_username, "MYSQL_USER", "root")
+	SetEnvParams(&Setting.Database_username, "MYSQL_USER", "book_manager")
 	SetEnvParams(&Setting.Database_password, "MYSQL_PASSWORD", "")
-	SetEnvParams(&Setting.Database_port, "SERVER_ADDRESS", "8082")
+	SetEnvParams(&Setting.Database_port, "SERVER_ADDRESS", "localhost:3306")
 
 	SetEnvParams(&Setting.Database_max_connection, "DATABASE_MAX_CONN_COUNT", "3")
 	SetEnvParams(&Setting.Database_timeout, "DATABASE_TIMEOUT", "50")

@@ -26,6 +26,10 @@ type Database struct {
 	Router    *mux.Router
 }
 
+var (
+	DB_DRIVER = "mysql"
+)
+
 func (server Database) InitializeDatabase() (*gorm.DB, error) {
 
 	var err error
@@ -40,7 +44,7 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 		Setting.Database_password, Setting.Database_host, Setting.Database_port, Setting.Database_name)
 
 	fmt.Println(connectionString)
-	// open db session
+
 	log.Println("Connection: ", connectionString)
 	var sqlDb *sql.DB
 
@@ -48,7 +52,7 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 	db_timeout := handers.StringToInt(Setting.Database_timeout)
 
 	for i := 0; i <= db_count; i++ {
-		sqlDb, err = sql.Open("mysql", connectionString)
+		sqlDb, err = sql.Open(DB_DRIVER, connectionString)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -97,7 +101,9 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 }
 
 func Migrate(db *gorm.DB) (*gorm.DB, error) {
-	db.Debug().AutoMigrate(&objects.Book{}, &objects.Genre{})
+	db.Debug().AutoMigrate(&objects.Book{})
+	db.Debug().AutoMigrate(&objects.Genre{})
+	db.Migrator()
 
 	return db, db.Error
 }
