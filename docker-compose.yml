@@ -22,7 +22,7 @@ services:
   db:
     image: mysql:latest
     volumes:  
-      - "./source/database/migrations/bookstore_database.sql:/docker-entrypoint-initdb.d/bookstore_database.sql"
+      - book_store_mysql_data:/var/lib/mysql
       
     container_name: bookstore_database
     environment:
@@ -37,7 +37,8 @@ services:
     restart: on-failure      
 networks:
     inner_host:
-        driver: "bridge"  
+        driver: "bridge"
+          
   
 volumes:
-    bookstore:
+    book_store_mysql_data:

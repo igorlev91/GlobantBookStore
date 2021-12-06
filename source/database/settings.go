@@ -37,7 +37,7 @@ func LoadEnv(path string) error {
 		panic(err.Error())
 	}
 
-	SetEnvParams(&Setting.Database_host, "MYSQL_HOST", "127.0.0.1")
+	SetEnvParams(&Setting.Database_host, "MYSQL_HOST", "bookstore_database")
 	SetEnvParams(&Setting.Database_name, "MYSQL_DATABASE", "bookstore")
 	SetEnvParams(&Setting.Database_username, "MYSQL_USER", "root")
 	SetEnvParams(&Setting.Database_password, "MYSQL_PASSWORD", "")
