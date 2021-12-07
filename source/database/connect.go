@@ -40,19 +40,19 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 	}
 	db := Database{}
 
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", Setting.Database_username,
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", Setting.Database_username,
 		Setting.Database_password, Setting.Database_host, Setting.Database_port, Setting.Database_name)
 
-	fmt.Println(connectionString)
+	fmt.Println(dsn)
 
-	log.Println("Connection: ", connectionString)
+	log.Println("Connection: ", dsn)
 	var sqlDb *sql.DB
 
 	db_count := handers.StringToInt(Setting.Database_max_connection)
 	db_timeout := handers.StringToInt(Setting.Database_timeout)
 
 	for i := 0; i <= db_count; i++ {
-		sqlDb, err = sql.Open(DB_DRIVER, connectionString)
+		sqlDb, err = sql.Open(DB_DRIVER, "book_manager:pseudo_pass@tcp(bookstore_database:3306)/bookstore?charset=utf8mb4&parseTime=True&loc=Local")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -127,7 +127,6 @@ func (d Database) GetSession(db *gorm.DB) *gorm.DB {
 
 func (server *Database) RunServer(addr string) {
 
-	fmt.Println("Listening to port 8000")
 	log.Fatal(http.ListenAndServe(addr, server.Router))
 
 }

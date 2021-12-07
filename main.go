@@ -7,12 +7,14 @@ import (
 )
 
 const (
-	ServerAddress string = "3000"
+	ServerAddress string = "8000"
 )
 
 var server = database.Database{}
 
 func main() {
+
+	//defer database.CloseDatabase(db)
 	fmt.Println("Start session")
 	server.InitializeDatabase()
 	server.RunServer(ServerAddress)

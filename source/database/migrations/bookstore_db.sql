@@ -1,4 +1,5 @@
 create database if not exists bookstore
+GRANT ALL PRIVILEGES ON bookstore.* TO 'root'@'%' IDENTIFIED BY 'mysql';
 
 use bookstore;
 

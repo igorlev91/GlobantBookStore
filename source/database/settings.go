@@ -14,6 +14,7 @@ var Setting struct {
 	Database_host     string
 	Database_port     string
 	Database_name     string
+	SERVER_ADDRESS    string
 
 	Database_max_connection string
 	Database_timeout        string
@@ -37,11 +38,11 @@ func LoadEnv(path string) error {
 		panic(err.Error())
 	}
 
-	SetEnvParams(&Setting.Database_host, "MYSQL_HOST", "bookstore_database")
+	SetEnvParams(&Setting.Database_host, "MYSQL_HOST", "localhost:3306")
 	SetEnvParams(&Setting.Database_name, "MYSQL_DATABASE", "bookstore")
 	SetEnvParams(&Setting.Database_username, "MYSQL_USER", "book_manager")
 	SetEnvParams(&Setting.Database_password, "MYSQL_PASSWORD", "")
-	SetEnvParams(&Setting.Database_port, "SERVER_ADDRESS", "localhost:3306")
+	SetEnvParams(&Setting.SERVER_ADDRESS, "SERVER_ADDRESS", "localhost:8000")
 
 	SetEnvParams(&Setting.Database_max_connection, "DATABASE_MAX_CONN_COUNT", "3")
 	SetEnvParams(&Setting.Database_timeout, "DATABASE_TIMEOUT", "50")

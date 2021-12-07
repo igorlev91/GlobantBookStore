@@ -22,15 +22,18 @@ services:
   db:
     image: mysql:latest
     volumes:  
-      - book_store_mysql_data:/var/lib/mysql
+      - dbdata:/var/lib/mysql
       
     container_name: bookstore_database
     ports:
-      - '3406:3306'
+     - "6033:3306"
     environment:
-      
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    
+      MYSQL_ROOT_PASSWORD: "pseudo_pass"
+      MYSQL_DATABASE: "bookstore"
+      MYSQL_USER: "book_manager"
+      MYSQL_PASSWORD: "pseudo_pass"
+      MYSQL_HOST: "bookstore_database"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"    
     env_file: 
        - ./setting.env  
     networks: 
@@ -40,6 +43,5 @@ networks:
     inner_host:
         driver: "bridge"
           
-  
 volumes:
-    book_store_mysql_data:
+    dbdata:
