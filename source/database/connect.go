@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -56,7 +57,7 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer sqlDb.Close()
+
 		if i == 2 {
 			fmt.Println("Waiting opening database")
 			break
@@ -83,10 +84,21 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 
 	db.Connetion, err = Migrate(driver_connection)
 	if err != nil {
-		panic(err.Error())
+		fmt.Printf("bad migrations")
+	} else {
+		fmt.Printf("good migrations")
 	}
 
 	fmt.Println("Successfully connection to database")
+
+	books := []objects.Book{}
+	if err := driver_connection.Find(&books).Error; err != nil {
+		log.Fatal(err)
+	}
+
+	result, err := json.Marshal(books)
+
+	fmt.Println(string(result))
 
 	log.Println("Creating router")
 	db.Router = mux.NewRouter()
@@ -103,7 +115,6 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 func Migrate(db *gorm.DB) (*gorm.DB, error) {
 	db.Debug().AutoMigrate(&objects.Book{})
 	db.Debug().AutoMigrate(&objects.Genre{})
-	db.Migrator()
 
 	return db, db.Error
 }

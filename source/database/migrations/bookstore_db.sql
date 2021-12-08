@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS book (
     FOREIGN KEY (genre_id)  REFERENCES book_genres (genre_id) on delete cascade
 );
 
-INSERT INTO Book
+INSERT INTO book
 VALUES (1, 'The Three Musketeers', 1, 10.44, 5);
 
 insert into book_genres (name_genre, genre_id) values
