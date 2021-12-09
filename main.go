@@ -28,7 +28,7 @@ func main() {
 	router := mux.NewRouter()
 
 	handler := &handlers.ORM{
-		DB: database.GetSession();
+		DB: server.Connetion,
 	}
 	router.HandleFunc("/books/{id:[0-9]+}", handler.GetBookByIdMethod).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", handler.UpdateBookMethod).Methods("PUT")
