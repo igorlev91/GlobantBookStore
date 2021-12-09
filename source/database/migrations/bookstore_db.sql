@@ -3,7 +3,7 @@ GRANT ALL PRIVILEGES ON bookstore.* TO 'root'@'%' IDENTIFIED BY 'mysql';
 
 use bookstore;
 
-CREATE TABLE book_genres (
+CREATE TABLE IF NOT EXISTS book_genres (
     name_genre VARCHAR (100) unique not null,
     genre_id INTEGER UNSIGNED NOT NULL, 
     primary key (genre_id)

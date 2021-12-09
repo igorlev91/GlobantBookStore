@@ -1,11 +1,5 @@
 package objects
 
-import (
-	"errors"
-
-	"gorm.io/gorm"
-)
-
 type Book struct {
 	BookID  uint    `json:"book_id" gorm:"primaryKey"`
 	Name    string  `json:"name" gorm:"unique;size:100;not null;"`
@@ -20,20 +14,7 @@ type Genre struct {
 	Name string `json:"name" gorm:"unique;type:varchar(100);not null"`
 }
 
-func GetBookByID(id uint, db *gorm.DB) (Book, bool, error) {
-	book := Book{}
-
-	err := db.First(&book, Book{BookID: id}).Error
-
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return book, false, err
-	}
-
-	return book, true, nil
-}
-
-func GetAllBooks(db *gorm.DB) ([]Book, error) {
-	books := []Book{}
-	//TODO
-	return books, nil
-}
+const (
+	BOOK  string = "Book"
+	GENRE string = "Genre"
+)

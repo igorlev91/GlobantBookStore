@@ -1,19 +1,10 @@
-package handers
+package handlers
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 )
-
-func StringToInt(val string) int {
-	res, err := strconv.Atoi(val)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
 
 func RespondJSON(empty bool, w http.ResponseWriter, status int, book interface{}) {
 	var response []byte

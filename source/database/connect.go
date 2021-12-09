@@ -3,9 +3,10 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/igorlev91/GlobantBookStore/source/handers"
+
 	"github.com/igorlev91/GlobantBookStore/source/objects"
 
 	"gorm.io/driver/mysql"
@@ -14,8 +15,6 @@ import (
 	"database/sql"
 	"log"
 	"time"
-
-	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -49,8 +48,8 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 	log.Println("Connection: ", dsn)
 	var sqlDb *sql.DB
 
-	db_count := handers.StringToInt(Setting.Database_max_connection)
-	db_timeout := handers.StringToInt(Setting.Database_timeout)
+	db_count := StringToInt(Setting.Database_max_connection)
+	db_timeout := StringToInt(Setting.Database_timeout)
 
 	for i := 0; i <= db_count; i++ {
 		sqlDb, err = sql.Open(DB_DRIVER, "book_manager:pseudo_pass@tcp(bookstore_database:3306)/bookstore?charset=utf8mb4&parseTime=True&loc=Local")
@@ -82,9 +81,9 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 		fmt.Printf("We are connected to the %s database", err)
 	}
 
-	db.Connetion, err = Migrate(driver_connection)
+	db.Connetion, err = SetupSchema(driver_connection)
 	if err != nil {
-		fmt.Printf("bad migrations")
+		fmt.Printf("Failed to initialize database schema: %v", err)
 	} else {
 		fmt.Printf("good migrations")
 	}
@@ -100,11 +99,6 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 
 	fmt.Println(string(result))
 
-	log.Println("Creating router")
-	db.Router = mux.NewRouter()
-
-	db.initializeRoutes()
-
 	if server.Connetion == nil {
 		return nil, err
 	}
@@ -112,23 +106,27 @@ func (server Database) InitializeDatabase() (*gorm.DB, error) {
 	return db.Connetion, nil
 }
 
-func Migrate(db *gorm.DB) (*gorm.DB, error) {
+func SetupSchema(db *gorm.DB) (*gorm.DB, error) {
+
+	log.Println("Updating database schema.")
+
 	db.Debug().AutoMigrate(&objects.Book{})
 	db.Debug().AutoMigrate(&objects.Genre{})
 
+	log.Println("Database schema updated.")
 	return db, db.Error
 }
 
-func (d *Database) CloseDatabase() error {
+// Shutdown closes the database connection.
+func (d *Database) CloseDatabase() (err error) {
 	sqlDB, err := d.Connetion.DB()
 	if err != nil {
 		return err
 	}
 	err = sqlDB.Close()
-	if err != nil {
-		return err
-	}
-	return nil
+
+	sqlDB = nil
+	return err
 }
 
 func (d Database) GetSession(db *gorm.DB) *gorm.DB {
@@ -136,15 +134,10 @@ func (d Database) GetSession(db *gorm.DB) *gorm.DB {
 	return d.Connetion
 }
 
-func (server *Database) RunServer(addr string) {
-
-	log.Fatal(http.ListenAndServe(addr, server.Router))
-
-}
-
-func (db *Database) initializeRoutes() {
-
-	db.Router.HandleFunc("/", db.CreateBookMethod).Methods("GET")
-	db.Router.HandleFunc("/books/{id:[0-9]+}", db.GetBookByIdMethod).Methods("GET")
-	db.Router.HandleFunc("/books", db.GetBooksByFilterMethod).Methods("GET")
+func StringToInt(val string) int {
+	res, err := strconv.Atoi(val)
+	if err != nil {
+		panic(err)
+	}
+	return res
 }
